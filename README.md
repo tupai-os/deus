@@ -1,6 +1,6 @@
 # Deus
 
-A portable microkernel written in Rust.
+A portable kernel written in Rust.
 
 ---
 

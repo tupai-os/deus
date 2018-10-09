@@ -1,11 +1,12 @@
 // Library
 use core::slice;
 use spin::RwLock;
+use volatile::Volatile;
 
 // Kernel
 use crate::dev::{SerialOut, SerialError};
 
-const TEXTMODE_BUFFER: *mut [u8; 2] = 0xB8000 as *mut [u8; 2];
+const TEXTMODE_BUFFER: *mut Volatile<[u8; 2]> = 0xB8000 as *mut Volatile<[u8; 2]>;
 const TEXTMODE_COLS: usize = 80;
 const TEXTMODE_ROWS: usize = 25;
 
@@ -35,7 +36,7 @@ impl SerialOut for Textmode {
     fn write_one(&mut self, c: Char) -> Result<(), SerialError> {
         let buffer_size = TEXTMODE_COLS * TEXTMODE_ROWS;
         let buffer = unsafe { slice::from_raw_parts_mut(TEXTMODE_BUFFER, buffer_size) };
-        buffer.get_mut(self.cursor % buffer_size).map(|cell| *cell = [c.ascii, c.color]);
+        buffer.get_mut(self.cursor % buffer_size).map(|cell| cell.write([c.ascii, c.color]));
         self.cursor += 1;
         Ok(())
     }
