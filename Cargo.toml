@@ -1,0 +1,17 @@
+[package]
+name = "deus"
+version = "0.1.0"
+authors = ["Joshua Barretto <joshua.s.barretto@gmail.com>"]
+edition = "2018"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
+[package.metadata.bootimage]
+default-target = "x86_64-deus.json"
+
+[dependencies]
+bootloader_precompiled = "0.2"
