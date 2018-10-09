@@ -11,6 +11,7 @@ name = "deus"
 version = "0.1.0"
 dependencies = [
  "bootloader_precompiled 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "spin 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -18,6 +19,12 @@ name = "os_bootinfo"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
+[[package]]
+name = "spin"
+version = "0.4.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
 [metadata]
 "checksum bootloader_precompiled 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "245362094f3e7e5c801e71646a672c1fa895c033ca47473278e3d99af6300be6"
 "checksum os_bootinfo 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "66481dbeb5e773e7bd85b63cd6042c30786f834338288c5ec4f3742673db360a"
+"checksum spin 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)" = "37b5646825922b96b5d7d676b5bb3458a54498e96ed7b0ce09dc43a07038fea4"
