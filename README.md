@@ -1,6 +1,6 @@
 # Deus
 
-A microkernel written in Rust.
+A portable microkernel written in Rust.
 
 ---
 
@@ -58,3 +58,17 @@ Alternatively, write the disk image to an external device to boot it on a real m
 ```
 dd if=target/x86_64-deus/debug/bootimage-deus.bin of=/dev/MY_DEVICE && sync
 ```
+
+## License
+
+Deus is licensed under the GNU Lesser General Public License version 3 (see `LICENSE`).
+
+As a general guide, this means that:
+
+- Deus may be used in commercial settings
+
+- Contributions to Deus must fall under the same license
+
+- Distributed modifications to the project must have their source disclosed
+
+For more detailed information, see [here](https://www.gnu.org/licenses/lgpl-3.0.html).
