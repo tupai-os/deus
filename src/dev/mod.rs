@@ -56,6 +56,7 @@ pub trait Framebuffer {
 #[derive(Clone, Debug)]
 pub enum PrinterError {
     FramebufferErr(FramebufferError),
+    NotPrintable,
 }
 
 impl From<FramebufferError> for PrinterError {

@@ -10,6 +10,9 @@ pub mod dev;
 pub mod vdev;
 pub mod driver;
 
+#[macro_use]
+pub mod log;
+
 // Library
 use core::panic::PanicInfo;
 
@@ -21,25 +24,14 @@ use crate::vdev::tty;
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     // Display a welcome message
-    tty::default_do_for_mut(|tty| {
-        tty.write_str("Deus started.").unwrap();
-    }).unwrap();
+    logln!("Deus started.");
 
     loop {}
 }
 
 #[cfg(not(test))]
 #[panic_handler]
-unsafe fn panic(_info: &PanicInfo) -> ! {
-    // Forcibly take the VGA lock - showing the error is more important than safety at this point!
-    // TODO: Make a driver-agnostic way of doing this
-    use crate::driver::vga;
-    vga::singleton().force_write_unlock();
-
-    // Display the panic message
-    tty::default_do_for_mut(|tty| {
-        tty.write_str("[KERNEL PANIC]").unwrap();
-    }).unwrap();
-
+unsafe fn panic(info: &PanicInfo) -> ! {
+    logln!("[PANIC] {}", info);
 	loop {}
 }
