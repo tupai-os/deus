@@ -40,11 +40,37 @@ pub trait SerialReader {
 // Framebuffer
 
 #[derive(Clone, Debug)]
-pub enum FramebufferError {}
+pub enum FramebufferError {
+    OutOfBounds,
+}
 
 pub trait Framebuffer {
     type Item: Copy + Clone;
 
     fn get(&self, x: usize, y: usize) -> Result<Self::Item, FramebufferError>;
     fn set(&mut self, x: usize, y: usize, item: Self::Item) -> Result<(), FramebufferError>;
+}
+
+// Printer
+
+#[derive(Clone, Debug)]
+pub enum PrinterError {
+    FramebufferErr(FramebufferError),
+}
+
+impl From<FramebufferError> for PrinterError {
+    fn from(err: FramebufferError) -> Self { PrinterError::FramebufferErr(err) }
+}
+
+pub trait Printer {
+    fn write_char(&mut self, c: char) -> Result<(), PrinterError>;
+    fn write_str(&mut self, s: &str) -> Result<usize, (usize, PrinterError)> {
+        // Default implementation
+        for (i, c) in s.chars().enumerate() {
+            if let Err(err) = self.write_char(c) {
+                return Err((i, err));
+            }
+        }
+        Ok(s.len())
+    }
 }
