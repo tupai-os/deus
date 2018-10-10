@@ -10,7 +10,7 @@ pub mod driver;
 use core::panic::PanicInfo;
 
 // Kernel
-use crate::dev::SerialOut;
+use crate::dev::SerialWriter;
 use crate::driver::vga;
 
 #[no_mangle]
