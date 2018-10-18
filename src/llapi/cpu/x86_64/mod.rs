@@ -1,7 +1,10 @@
+mod idt;
+
 // Library
-use spin::{RwLock, Once};
+use spin::{Once, RwLock};
 
 // Kernel
+use crate::bootinfo::BootInfo;
 use crate::llapi::cpu;
 
 // TODO: Don't hard-code this
@@ -11,16 +14,19 @@ static VENDOR: &str = "Intel";
 
 pub struct Cpu {
     info: cpu::CpuInfo,
-    cores: [Core; 1],
+    cores: [Core; 4],
 }
 
 impl Cpu {
     fn singleton() -> Self {
         Self {
-            info: cpu::CpuInfo {
-                vendor: VENDOR,
-            },
-            cores: [Core::singleton(); 1]
+            info: cpu::CpuInfo { vendor: VENDOR },
+            cores: [
+                Core::singleton(),
+                Core::singleton(),
+                Core::singleton(),
+                Core::singleton(),
+            ],
         }
     }
 }
@@ -31,11 +37,9 @@ impl cpu::Cpu for Cpu {
     fn info(&self) -> &cpu::CpuInfo {
         &self.info
     }
-
     fn cores(&self) -> &[Self::Core] {
         &self.cores
     }
-
     fn cores_mut(&mut self) -> &mut [Self::Core] {
         &mut self.cores
     }
@@ -59,6 +63,21 @@ impl cpu::Core for Core {
     fn info(&self) -> &cpu::CoreInfo {
         &self.info
     }
+    unsafe fn enable_irqs(&self) {
+        asm!("sti");
+    }
+    unsafe fn disable_irqs(&self) {
+        asm!("sti");
+    }
+}
+
+// _start
+
+#[cfg(not(test))]
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    idt::init();
+    crate::kernel_entry(BootInfo)
 }
 
 static SINGLETON: Once<RwLock<Cpu>> = Once::new();

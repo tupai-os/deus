@@ -10,9 +10,13 @@ pub trait Write<T: Clone> {
     fn write_one(&mut self, item: T) -> Result<(), IoError>;
     fn write_all(&mut self, buf: &[T]) -> Result<usize, IoError> {
         // Default impl
-        buf.iter().enumerate().try_fold(buf.len(), |_, (i, item)| self.write_one(item.clone()).map(|_| i))
+        buf.iter().enumerate().try_fold(buf.len(), |_, (i, item)| {
+            self.write_one(item.clone()).map(|_| i)
+        })
     }
-    fn flush(&mut self) -> Result<(), IoError> { Ok(()) }
+    fn flush(&mut self) -> Result<(), IoError> {
+        Ok(())
+    }
 }
 
 // Buffer

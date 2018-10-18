@@ -6,9 +6,7 @@ use crate::vdev::tty;
 
 #[allow(dead_code)]
 pub fn log_args(args: fmt::Arguments) {
-    tty::default_do_for_mut(|tty| {
-        tty.write_fmt(args)
-    })
+    tty::default_do_for_mut(|tty| tty.write_fmt(args))
         .expect("Could access default TTY")
         .expect("Could not log to default TTY");
 }

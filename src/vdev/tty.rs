@@ -1,9 +1,9 @@
 // Library
 use core::fmt;
-use spin::{RwLock, Once};
+use spin::{Once, RwLock};
 
 // Kernel
-use crate::util::ioface::{IoError, Write, Framebuffer};
+use crate::util::ioface::{Framebuffer, IoError, Write};
 
 pub struct Tty {
     cursor: (usize, usize),
@@ -27,18 +27,19 @@ impl Write<char> for Tty {
                 self.cursor.1 = (self.cursor.1 + 1) % self.size.1;
 
                 Ok(())
-            },
+            }
             c if c.is_ascii_graphic() || c == ' ' => {
                 // TODO: Make this driver agnostic
                 use crate::driver::vga;
-                vga::singleton()
-                    .write()
-                    .textmode_mut()
-                    .set(
-                        self.cursor.0,
-                        self.cursor.1,
-                        if c.is_ascii() { (c as u8).into() } else { b'?'.into() },
-                    )?;
+                vga::singleton().write().textmode_mut().set(
+                    self.cursor.0,
+                    self.cursor.1,
+                    if c.is_ascii() {
+                        (c as u8).into()
+                    } else {
+                        b'?'.into()
+                    },
+                )?;
 
                 // Move cursor accordingly
                 self.cursor.0 += 1;
@@ -52,7 +53,7 @@ impl Write<char> for Tty {
                 }
 
                 Ok(())
-            },
+            }
             _ => Err(IoError::InvalidItem),
         }
     }
@@ -60,12 +61,16 @@ impl Write<char> for Tty {
 
 impl fmt::Write for Tty {
     fn write_str(&mut self, s: &str) -> fmt::Result {
-        s.chars().try_for_each(|c| self.write_one(c)).map_err(|_| fmt::Error::default())
+        s.chars()
+            .try_for_each(|c| self.write_one(c))
+            .map_err(|_| fmt::Error::default())
     }
 }
 
 static DEFAULT: Once<RwLock<Tty>> = Once::new();
 
 pub fn default_do_for_mut<R, F: FnOnce(&mut Tty) -> R>(f: F) -> Result<R, IoError> {
-    Ok(f(&mut DEFAULT.call_once(|| RwLock::new(Tty::singleton())).write()))
+    Ok(f(&mut DEFAULT
+        .call_once(|| RwLock::new(Tty::singleton()))
+        .write()))
 }
