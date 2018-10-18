@@ -17,7 +17,6 @@ pub mod log;
 use core::panic::PanicInfo;
 
 // Kernel
-use crate::dev::Printer;
 use crate::vdev::tty;
 
 #[cfg(not(test))]

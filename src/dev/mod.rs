@@ -1,77 +1,32 @@
-// Serial
+// Library
+use core::fmt;
 
 #[derive(Clone, Debug)]
-pub enum SerialError {}
-
-pub trait SerialWriter {
-    type Item: Copy + Clone;
-
-    fn write_one(&mut self, item: Self::Item) -> Result<(), SerialError>;
-
-    fn write_many(&mut self, items: impl Iterator<Item=Self::Item>) -> Result<(), (usize, SerialError)> {
-        // Default implementation
-        for (i, item) in items.enumerate() {
-            if let Err(err) = self.write_one(item) {
-                return Err((i, err));
-            }
-        }
-        Ok(())
-    }
+pub enum IoError {
+    InvalidItem,
+    OutOfBounds,
 }
 
-pub trait SerialReader {
-    type Item: Copy + Clone;
+// Write
 
-    fn read_one(&mut self) -> Result<Option<Self::Item>, SerialError>;
-
-    fn read_many(&mut self, buff: &mut [Self::Item]) -> Result<usize, (usize, SerialError)> {
-        // Default implementation
-        for i in 0..buff.len() {
-            match self.read_one() {
-                Ok(Some(item)) => buff.get_mut(i).map(|e| *e = item),
-                Ok(None) => return Ok(i),
-                Err(err) => return Err((i, err)),
-            };
-        }
-        Ok(buff.len())
+pub trait Write<T: Clone> {
+    fn write_one(&mut self, item: T) -> Result<(), IoError>;
+    fn write_all(&mut self, buf: &[T]) -> Result<usize, IoError> {
+        // Default impl
+        buf.iter().enumerate().try_fold(buf.len(), |_, (i, item)| self.write_one(item.clone()).map(|_| i))
     }
+    fn flush(&mut self) -> Result<(), IoError> { Ok(()) }
+}
+
+// Buffer
+
+pub trait Buffer<T: Clone> {
+    // TODO
 }
 
 // Framebuffer
 
-#[derive(Clone, Debug)]
-pub enum FramebufferError {
-    OutOfBounds,
-}
-
-pub trait Framebuffer {
-    type Item: Copy + Clone;
-
-    fn get(&self, x: usize, y: usize) -> Result<Self::Item, FramebufferError>;
-    fn set(&mut self, x: usize, y: usize, item: Self::Item) -> Result<(), FramebufferError>;
-}
-
-// Printer
-
-#[derive(Clone, Debug)]
-pub enum PrinterError {
-    FramebufferErr(FramebufferError),
-    NotPrintable,
-}
-
-impl From<FramebufferError> for PrinterError {
-    fn from(err: FramebufferError) -> Self { PrinterError::FramebufferErr(err) }
-}
-
-pub trait Printer {
-    fn write_char(&mut self, c: char) -> Result<(), PrinterError>;
-    fn write_str(&mut self, s: &str) -> Result<usize, (usize, PrinterError)> {
-        // Default implementation
-        for (i, c) in s.chars().enumerate() {
-            if let Err(err) = self.write_char(c) {
-                return Err((i, err));
-            }
-        }
-        Ok(s.len())
-    }
+pub trait Framebuffer<T: Clone> {
+    fn get(&self, x: usize, y: usize) -> Result<T, IoError>;
+    fn set(&mut self, x: usize, y: usize, item: T) -> Result<(), IoError>;
 }

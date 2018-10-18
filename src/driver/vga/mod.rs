@@ -5,8 +5,8 @@ use volatile::Volatile;
 
 // Kernel
 use crate::dev::{
-    SerialWriter, SerialError,
-    Framebuffer, FramebufferError,
+    Write, IoError,
+    Framebuffer,
 };
 
 const TEXTMODE_BUFFER: *mut Volatile<Char> = 0xB8000 as *mut Volatile<Char>;
@@ -40,33 +40,29 @@ impl Textmode {
     }
 }
 
-impl SerialWriter for Textmode {
-    type Item = Char;
-
-    fn write_one(&mut self, c: Char) -> Result<(), SerialError> {
+impl Write<Char> for Textmode {
+    fn write_one(&mut self, c: Char) -> Result<(), IoError> {
         self.buffer().get_mut(self.cursor % self.buffer().len()).map(|cell| cell.write(c));
         self.cursor += 1;
         Ok(())
     }
 }
 
-impl Framebuffer for Textmode {
-    type Item = Char;
-
-    fn get(&self, x: usize, y: usize) -> Result<Char, FramebufferError> {
+impl Framebuffer<Char> for Textmode {
+    fn get(&self, x: usize, y: usize) -> Result<Char, IoError> {
         self
             .buffer()
             .get(y * TEXTMODE_COLS + x)
             .map(|e| e.read())
-            .ok_or(FramebufferError::OutOfBounds)
+            .ok_or(IoError::OutOfBounds)
     }
 
-    fn set(&mut self, x: usize, y: usize, c: Char) -> Result<(), FramebufferError> {
+    fn set(&mut self, x: usize, y: usize, c: Char) -> Result<(), IoError> {
         self
             .buffer()
             .get_mut(y * TEXTMODE_COLS + x)
             .map(|e| e.write(c))
-            .ok_or(FramebufferError::OutOfBounds)
+            .ok_or(IoError::OutOfBounds)
     }
 }
 

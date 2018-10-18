@@ -3,10 +3,7 @@ use core::fmt;
 use spin::{RwLock, Once};
 
 // Kernel
-use crate::dev::{
-    Framebuffer,
-    Printer, PrinterError,
-};
+use crate::dev::{IoError, Write, Framebuffer};
 
 pub struct Tty {
     cursor: (usize, usize),
@@ -22,8 +19,8 @@ impl Tty {
     }
 }
 
-impl Printer for Tty {
-    fn write_char(&mut self, c: char) -> Result<(), PrinterError> {
+impl Write<char> for Tty {
+    fn write_one(&mut self, c: char) -> Result<(), IoError> {
         match c {
             '\n' => {
                 self.cursor.0 = 0;
@@ -56,20 +53,19 @@ impl Printer for Tty {
 
                 Ok(())
             },
-            _ => Err(PrinterError::NotPrintable),
+            _ => Err(IoError::InvalidItem),
         }
     }
 }
 
 impl fmt::Write for Tty {
     fn write_str(&mut self, s: &str) -> fmt::Result {
-        Printer::write_str(self, s).unwrap();
-        Ok(())
+        s.chars().try_for_each(|c| self.write_one(c)).map_err(|_| fmt::Error::default())
     }
 }
 
 static DEFAULT: Once<RwLock<Tty>> = Once::new();
 
-pub fn default_do_for_mut<R, F: FnOnce(&mut Tty) -> R>(f: F) -> Result<R, PrinterError> {
+pub fn default_do_for_mut<R, F: FnOnce(&mut Tty) -> R>(f: F) -> Result<R, IoError> {
     Ok(f(&mut DEFAULT.call_once(|| RwLock::new(Tty::singleton())).write()))
 }
