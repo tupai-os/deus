@@ -1,8 +1,10 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(not(test), no_main)]
+
 // Suppress warnings when testing
 #![cfg_attr(test, allow(dead_code, unused_macros, unused_imports))]
-#![feature(asm, self_struct_ctor)]
+
+#![feature(asm, self_struct_ctor, global_asm)]
 
 pub mod driver;
 pub mod llapi;
@@ -31,20 +33,18 @@ pub fn kernel_entry(_info: BootInfo) -> ! {
 
     // Display CPU information
     logln!("{}", llapi::cpu::singleton().read().info());
-    for (i, core) in llapi::cpu::singleton().read().cores().iter().enumerate() {
-        logln!("Core {}:", i);
-        logln!("{}", core.info());
-    }
 
     // Enable IRQs
-    // unsafe { llapi::cpu::singleton().read().cores()[0].enable_irqs(); }
+    unsafe { llapi::cpu::singleton().read().cores()[0].enable_irqs(); }
 
     loop {}
 }
 
 #[cfg(not(test))]
 #[panic_handler]
-unsafe fn panic(info: &PanicInfo) -> ! {
+pub fn panic(info: &PanicInfo) -> ! {
+    // Disable IRQs
+    unsafe { llapi::cpu::singleton().read().cores().iter().for_each(|core| core.disable_irqs()); }
     logln!("[PANIC] {}", info);
     loop {}
 }

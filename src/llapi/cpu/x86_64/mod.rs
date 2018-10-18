@@ -1,4 +1,11 @@
+mod gdt;
 mod idt;
+mod exception;
+mod irq;
+mod port;
+mod pic;
+
+global_asm!(include_str!("isr.s"));
 
 // Library
 use spin::{Once, RwLock};
@@ -76,7 +83,12 @@ impl cpu::Core for Core {
 #[cfg(not(test))]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    gdt::init();
     idt::init();
+    exception::init();
+    irq::init();
+    pic::init();
+
     crate::kernel_entry(BootInfo)
 }
 
