@@ -1,6 +1,3 @@
-// Library
-use core::fmt;
-
 #[derive(Clone, Debug)]
 pub enum IoError {
     InvalidItem,

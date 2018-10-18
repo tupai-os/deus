@@ -4,10 +4,7 @@ use spin::RwLock;
 use volatile::Volatile;
 
 // Kernel
-use crate::dev::{
-    Write, IoError,
-    Framebuffer,
-};
+use crate::util::ioface::{IoError, Write, Framebuffer};
 
 const TEXTMODE_BUFFER: *mut Volatile<Char> = 0xB8000 as *mut Volatile<Char>;
 const TEXTMODE_COLS: usize = 80;
@@ -88,7 +85,7 @@ impl Vga {
     }
 }
 
-pub static SINGLETON: RwLock<Vga> = RwLock::new(Vga::singleton());
+static SINGLETON: RwLock<Vga> = RwLock::new(Vga::singleton());
 
 pub fn singleton() -> &'static RwLock<Vga> {
     &SINGLETON

@@ -3,7 +3,7 @@ use core::fmt;
 use spin::{RwLock, Once};
 
 // Kernel
-use crate::dev::{IoError, Write, Framebuffer};
+use crate::util::ioface::{IoError, Write, Framebuffer};
 
 pub struct Tty {
     cursor: (usize, usize),
