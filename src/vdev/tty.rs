@@ -17,11 +17,31 @@ impl Tty {
             size: (80, 25),
         }
     }
+
+    fn increment_cursor(&mut self, n: usize) {
+        // Move cursor accordingly
+        self.cursor.0 += n;
+        while self.cursor.0 >= self.size.0 {
+            self.cursor.0 -= self.size.0;
+
+            self.cursor.1 += 1;
+            if self.cursor.1 == self.size.1 {
+                self.cursor.1 = 0;
+            }
+        }
+    }
 }
 
 impl Write<char> for Tty {
     fn write_one(&mut self, c: char) -> Result<(), IoError> {
         match c {
+            '\t' => {
+                self.increment_cursor(1);
+                while self.cursor.0 % 4 != 0 {
+                    self.increment_cursor(1);
+                }
+                Ok(())
+            },
             '\n' => {
                 self.cursor.0 = 0;
                 self.cursor.1 = (self.cursor.1 + 1) % self.size.1;
@@ -41,16 +61,7 @@ impl Write<char> for Tty {
                     },
                 )?;
 
-                // Move cursor accordingly
-                self.cursor.0 += 1;
-                if self.cursor.0 == self.size.0 {
-                    self.cursor.0 = 0;
-
-                    self.cursor.1 += 1;
-                    if self.cursor.1 == self.size.1 {
-                        self.cursor.1 = 0;
-                    }
-                }
+                self.increment_cursor(1);
 
                 Ok(())
             }

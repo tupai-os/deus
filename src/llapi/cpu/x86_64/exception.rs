@@ -1,5 +1,6 @@
 // Local
-use super::idt;
+use super::super::super::super::{log, logln}; // TODO: Why is this needed?!
+use super::{idt, isr::StackFrame};
 
 extern "C" {
 	fn _exception_handler0();
@@ -57,31 +58,36 @@ pub enum Exception {
 }
 
 #[no_mangle]
-extern "C" fn divzero_handler(frame: *const ()) -> *const () {
+extern "C" fn divzero_handler(frame: *mut StackFrame) -> *mut StackFrame {
+    logln!("{}", unsafe { &*frame });
     panic!("Division by zero exception!");
     frame
 }
 
 #[no_mangle]
-extern "C" fn debug_handler(frame: *const ()) -> *const () {
+extern "C" fn debug_handler(frame: *mut StackFrame) -> *mut StackFrame {
+    logln!("{}", unsafe { &*frame });
     panic!("Debug exception!");
     frame
 }
 
 #[no_mangle]
-extern "C" fn gpf_handler(frame: *const ()) -> *const () {
+extern "C" fn gpf_handler(frame: *mut StackFrame) -> *mut StackFrame {
+    logln!("{}", unsafe { &*frame });
     panic!("General protection fault exception!");
     frame
 }
 
 #[no_mangle]
-extern "C" fn pagefault_handler(frame: *const ()) -> *const () {
+extern "C" fn pagefault_handler(frame: *mut StackFrame) -> *mut StackFrame {
+    logln!("{}", unsafe { &*frame });
     panic!("Page fault exception!");
     frame
 }
 
 #[no_mangle]
-extern "C" fn misc_handler(frame: *const ()) -> *const () {
+extern "C" fn misc_handler(frame: *mut StackFrame) -> *mut StackFrame {
+    logln!("{}", unsafe { &*frame });
     panic!("Unimplemented handler exception!");
     frame
 }

@@ -65,7 +65,7 @@ pub struct Ptr {
 const IRQ_ENTRY_COUNT: usize = 256;
 
 #[repr(C)]
-#[repr(align(16))]
+#[repr(align(4096))]
 pub struct Table {
     exception_handlers: [Entry; 32],
     irq_handlers: [Entry; IRQ_ENTRY_COUNT],

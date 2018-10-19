@@ -28,23 +28,32 @@ use crate::llapi::cpu::{Core, Cpu};
 /// condition with IRQs disabled, the kernel heap initiated and logging
 /// enabled.
 pub fn kernel_entry(_info: BootInfo) -> ! {
-    // Display a welcome message
-    logln!("Deus started.");
+    // We use a scope to ensure everything gets dropped before the scheduler starts
+    {
+        // Display a welcome message
+        logln!("Deus started.");
 
-    // Display CPU information
-    logln!("{}", llapi::cpu::singleton().read().info());
+        // Display CPU information
+        logln!("{}", llapi::cpu::singleton().info());
 
-    // Enable IRQs
-    unsafe { llapi::cpu::singleton().read().cores()[0].enable_irqs(); }
+        // Enable IRQs
+        unsafe { llapi::cpu::singleton().primary_core().enable_irqs(); }
+    }
 
-    loop {}
+    loop {
+        llapi::cpu::singleton().this_core().await_irq();
+    }
 }
 
 #[cfg(not(test))]
 #[panic_handler]
 pub fn panic(info: &PanicInfo) -> ! {
-    // Disable IRQs
-    unsafe { llapi::cpu::singleton().read().cores().iter().for_each(|core| core.disable_irqs()); }
     logln!("[PANIC] {}", info);
-    loop {}
+    loop {
+        // Disable IRQs and halt
+        for core in llapi::cpu::singleton().cores() {
+            unsafe { core.disable_irqs(); }
+            core.await_irq();
+        }
+    }
 }

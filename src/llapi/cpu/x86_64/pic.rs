@@ -31,11 +31,11 @@ impl Port for Pic1Cmd { const ADDR: u16 = 0x20; }
 static PIC1_CMD: PortLock<Pic1Cmd> = PortLock::new();
 
 struct Pic1Data;
-impl Port for Pic1Data { const ADDR: u16 = 0x20; }
+impl Port for Pic1Data { const ADDR: u16 = Pic1Cmd::ADDR + 1; }
 static PIC1_DATA: PortLock<Pic1Data> = PortLock::new();
 
 struct Pic2Cmd;
-impl Port for Pic2Cmd { const ADDR: u16 = Pic1Cmd::ADDR + 1; }
+impl Port for Pic2Cmd { const ADDR: u16 = 0xA0; }
 static PIC2_CMD: PortLock<Pic2Cmd> = PortLock::new();
 
 struct Pic2Data;

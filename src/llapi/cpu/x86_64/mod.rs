@@ -1,5 +1,6 @@
 mod gdt;
 mod idt;
+mod isr;
 mod exception;
 mod irq;
 mod port;
@@ -41,15 +42,10 @@ impl Cpu {
 impl cpu::Cpu for Cpu {
     type Core = Core;
 
-    fn info(&self) -> &cpu::CpuInfo {
-        &self.info
-    }
-    fn cores(&self) -> &[Self::Core] {
-        &self.cores
-    }
-    fn cores_mut(&mut self) -> &mut [Self::Core] {
-        &mut self.cores
-    }
+    fn info(&self) -> &cpu::CpuInfo { &self.info }
+    fn cores(&self) -> &[Self::Core] { &self.cores }
+    fn primary_core(&self) -> &Self::Core { &self.cores[0] }
+    fn this_core(&self) -> &Self::Core { &self.cores[0] }
 }
 
 // Core
@@ -67,15 +63,10 @@ impl Core {
 }
 
 impl cpu::Core for Core {
-    fn info(&self) -> &cpu::CoreInfo {
-        &self.info
-    }
-    unsafe fn enable_irqs(&self) {
-        asm!("sti");
-    }
-    unsafe fn disable_irqs(&self) {
-        asm!("sti");
-    }
+    fn info(&self) -> &cpu::CoreInfo { &self.info }
+    unsafe fn enable_irqs(&self) { asm!("sti"); }
+    unsafe fn disable_irqs(&self) { asm!("sti"); }
+    fn await_irq(&self) { unsafe { asm!("hlt"); } }
 }
 
 // _start
@@ -85,15 +76,15 @@ impl cpu::Core for Core {
 pub extern "C" fn _start() -> ! {
     gdt::init();
     idt::init();
+    pic::init();
     exception::init();
     irq::init();
-    pic::init();
 
     crate::kernel_entry(BootInfo)
 }
 
-static SINGLETON: Once<RwLock<Cpu>> = Once::new();
+static SINGLETON: Once<Cpu> = Once::new();
 
-pub fn singleton() -> &'static RwLock<Cpu> {
-    SINGLETON.call_once(|| RwLock::new(Cpu::singleton()))
+pub fn singleton() -> &'static Cpu {
+    SINGLETON.call_once(|| Cpu::singleton())
 }

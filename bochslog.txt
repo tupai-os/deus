@@ -32,7 +32,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: UHCI
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7efd467f5010. after alignment, vector=0x7efd467f6000
+00000000000i[MEM0  ] allocated memory at 0x7f768fe13010. after alignment, vector=0x7f768fe14000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/share/bochs/BIOS-bochs-latest')
@@ -43,7 +43,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Thu Oct 18 22:49:03 2018 (time0=1539899343)
+00000000000i[CMOS  ] Setting initial clock to: Fri Oct 19 10:57:58 2018 (time0=1539943078)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -70,8 +70,8 @@
 00000000000i[PLUGIN] init_dev of 'keyboard' plugin device by virtual method
 00000000000i[KBD   ] will paste characters every 400 keyboard ticks
 00000000000i[PLUGIN] init_dev of 'harddrv' plugin device by virtual method
-00000000000i[HD    ] CD on ata0-0: 'target/x86_64-deus/debug/bootimage-deus.bin'
-00000000000i[CD1   ] load cdrom with path='target/x86_64-deus/debug/bootimage-deus.bin'
+00000000000i[HD    ] CD on ata0-0: 'deus.iso'
+00000000000i[CD1   ] load cdrom with path='deus.iso'
 00000000000i[CD1   ] Opening image file as a cd.
 00000000000i[HD    ] Media present in CD-ROM drive
 00000000000e[CD1   ] expected cdrom image to be a multiple of 2048 bytes
@@ -197,27 +197,27 @@
 00001500581i[BXVGA ] VBE known Display Interface b0c0
 00001500613i[BXVGA ] VBE known Display Interface b0c5
 00001503538i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002352319i[XGUI  ] charmap update. Font is 9 x 16
-00005285054i[BIOS  ] IDE time out
-01287301855i[BIOS  ] CDROM boot failure code : 0005
-01287356868p[BIOS  ] >>PANIC<< No bootable device.
-01287356868i[CPU0  ] CPU is in real mode (active)
-01287356868i[CPU0  ] CS.mode = 16 bit
-01287356868i[CPU0  ] SS.mode = 16 bit
-01287356868i[CPU0  ] EFER   = 0x00000000
-01287356868i[CPU0  ] | EAX=0000040a  EBX=0000cd24  ECX=00090004  EDX=00000402
-01287356868i[CPU0  ] | ESP=0000ffa8  EBP=0000ffac  ESI=000e0000  EDI=0000f782
-01287356868i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-01287356868i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-01287356868i[CPU0  ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
-01287356868i[CPU0  ] |  DS:f000( 0005| 0|  0) 000f0000 0000ffff 0 0
-01287356868i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-01287356868i[CPU0  ] |  ES:0f7c( 0005| 0|  0) 0000f7c0 0000ffff 0 0
-01287356868i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-01287356868i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-01287356868i[CPU0  ] | EIP=0000054b (0000054a)
-01287356868i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
-01287356868i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-01287356868i[CMOS  ] Last time is 1539900630 (Thu Oct 18 23:10:30 2018)
-01287356868i[XGUI  ] Exit
-01287356868i[SIM   ] quit_sim called with exit code 1
+00002926447i[XGUI  ] charmap update. Font is 9 x 16
+00005285031i[BIOS  ] IDE time out
+01433396312i[BIOS  ] CDROM boot failure code : 0005
+01433451325p[BIOS  ] >>PANIC<< No bootable device.
+01433451325i[CPU0  ] CPU is in real mode (active)
+01433451325i[CPU0  ] CS.mode = 16 bit
+01433451325i[CPU0  ] SS.mode = 16 bit
+01433451325i[CPU0  ] EFER   = 0x00000000
+01433451325i[CPU0  ] | EAX=0000040a  EBX=0000cd24  ECX=00090004  EDX=00000402
+01433451325i[CPU0  ] | ESP=0000ffa8  EBP=0000ffac  ESI=000e0000  EDI=0000f782
+01433451325i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+01433451325i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+01433451325i[CPU0  ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
+01433451325i[CPU0  ] |  DS:f000( 0005| 0|  0) 000f0000 0000ffff 0 0
+01433451325i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01433451325i[CPU0  ] |  ES:0f7c( 0005| 0|  0) 0000f7c0 0000ffff 0 0
+01433451325i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01433451325i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01433451325i[CPU0  ] | EIP=0000054b (0000054a)
+01433451325i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
+01433451325i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+01433451325i[CMOS  ] Last time is 1539944511 (Fri Oct 19 11:21:51 2018)
+01433451325i[XGUI  ] Exit
+01433451325i[SIM   ] quit_sim called with exit code 1

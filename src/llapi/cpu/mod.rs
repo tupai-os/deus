@@ -8,7 +8,8 @@ pub trait Cpu {
 
     fn info(&self) -> &CpuInfo;
     fn cores(&self) -> &[Self::Core];
-    fn cores_mut(&mut self) -> &mut [Self::Core];
+    fn primary_core(&self) -> &Self::Core;
+    fn this_core(&self) -> &Self::Core;
 }
 
 // CpuInfo
@@ -37,6 +38,7 @@ pub trait Core {
     fn info(&self) -> &CoreInfo;
     unsafe fn enable_irqs(&self);
     unsafe fn disable_irqs(&self);
+    fn await_irq(&self);
 }
 
 // CoreInfo

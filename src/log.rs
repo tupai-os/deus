@@ -12,11 +12,13 @@ pub fn log_args(args: fmt::Arguments) {
 }
 
 #[allow(dead_code)]
+#[macro_export]
 macro_rules! log {
     ($($arg:tt)*) => ($crate::log::log_args(format_args!($($arg)*)));
 }
 
 #[allow(dead_code)]
+#[macro_export]
 macro_rules! logln {
     () => (log!("\n"));
     ($fmt:expr) => (log!(concat!($fmt, "\n")));

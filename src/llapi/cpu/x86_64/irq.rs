@@ -33,5 +33,9 @@ extern "C" fn spurious_handler(frame: *const ()) -> *const () {
 pub fn init() {
     let mut idt_guard = idt::singleton().write();
     idt_guard.set_irq_handler(0, idt::Entry::from_addr(pit_handler as u64));
+    idt_guard.set_irq_handler(1, idt::Entry::from_addr(kbd_handler as u64));
+    idt_guard.set_irq_handler(3, idt::Entry::from_addr(com2_handler as u64));
+    idt_guard.set_irq_handler(4, idt::Entry::from_addr(com1_handler as u64));
+    idt_guard.set_irq_handler(7, idt::Entry::from_addr(spurious_handler as u64));
     unsafe { idt_guard.flush(); }
 }
