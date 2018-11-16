@@ -67,21 +67,21 @@ const IRQ_ENTRY_COUNT: usize = 256;
 #[repr(C)]
 #[repr(align(4096))]
 pub struct Table {
-    exception_handlers: [Entry; 32],
+    fault_handlers: [Entry; 32],
     irq_handlers: [Entry; IRQ_ENTRY_COUNT],
 }
 
 impl Table {
     const fn empty() -> Self {
         Self {
-            exception_handlers: [Entry::empty(); 32],
+            fault_handlers: [Entry::empty(); 32],
             irq_handlers: [Entry::empty(); IRQ_ENTRY_COUNT],
         }
     }
 
-    pub fn set_exception_handler(&mut self, vec: usize, entry: Entry) {
-        self.exception_handlers.get_mut(vec).map(|e| *e = entry)
-            .expect("Attempted to set out-of-bounds IDT exception entry");
+    pub fn set_fault_handler(&mut self, vec: usize, entry: Entry) {
+        self.fault_handlers.get_mut(vec).map(|e| *e = entry)
+            .expect("Attempted to set out-of-bounds IDT fault entry");
     }
 
     pub fn set_irq_handler(&mut self, vec: usize, entry: Entry) {
@@ -108,6 +108,7 @@ pub fn init() {
     unsafe { IDT.read().flush(); }
 }
 
+#[allow(dead_code)]
 pub fn singleton() -> &'static RwLock<Table> {
     &IDT
 }

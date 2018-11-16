@@ -2,7 +2,7 @@
 use bitflags::bitflags;
 
 // Local
-use super::port::{Port, PortLock};
+use super::super::port::{Port, PortLock};
 
 bitflags! {
     struct Icw1: u8 {

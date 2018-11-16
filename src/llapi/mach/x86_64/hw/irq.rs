@@ -1,5 +1,7 @@
+global_asm!(include_str!("irq.s"));
+
 // Local
-use super::idt;
+use super::super::idt;
 
 #[no_mangle]
 extern "C" fn pit_handler(frame: *const ()) -> *const () {

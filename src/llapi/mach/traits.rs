@@ -15,7 +15,7 @@ pub trait Cpu {
 // CpuInfo
 
 pub struct CpuInfo {
-    vendor: &'static str,
+    pub vendor: &'static str,
 }
 
 impl fmt::Display for CpuInfo {
@@ -56,7 +56,3 @@ impl fmt::Display for CoreInfo {
         )
     }
 }
-
-// TODO: Cfg-gate this
-pub mod x86_64;
-pub use self::x86_64::*;

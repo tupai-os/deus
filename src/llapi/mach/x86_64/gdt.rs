@@ -106,18 +106,21 @@ impl Table {
         }
     }
 
-    fn set_entry(&mut self, vec: usize, entry: Entry) {
+    #[allow(dead_code)]
+    pub fn set_entry(&mut self, vec: usize, entry: Entry) {
         self.entries.get_mut(vec).map(|e| *e = entry)
             .expect("Attempted to set out-of-bounds GDT segment entry");
     }
 
-    fn get_ptr(&self) -> Ptr {
+    #[allow(dead_code)]
+    pub fn get_ptr(&self) -> Ptr {
         Ptr {
             lim: mem::size_of::<Self>() as u16 - 1,
             base: self as *const _ as u64,
         }
     }
 
+    #[allow(dead_code)]
     pub unsafe fn flush(&self) {
         let ptr = self.get_ptr();
         asm!("
@@ -140,6 +143,7 @@ pub fn init() {
     unsafe { GDT.read().flush(); }
 }
 
+#[allow(dead_code)]
 pub fn singleton() -> &'static RwLock<Table> {
     &GDT
 }

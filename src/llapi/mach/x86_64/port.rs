@@ -25,7 +25,7 @@ pub trait Port {
     const ADDR: u16;
 }
 
-// TODO: Improve this when const generics comes
+// TODO: Improve this when const generics come
 pub struct PortLock<P: Sized> {
     lock: Mutex<()>,
     _phantom: PhantomData<P>,

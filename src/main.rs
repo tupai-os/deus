@@ -20,13 +20,13 @@ use core::panic::PanicInfo;
 
 // Kernel
 use crate::bootinfo::BootInfo;
-use crate::llapi::cpu::{Core, Cpu};
+use crate::llapi::mach::traits::{Core, Cpu};
 
 /// The platform-agnostic kernel entry point
 ///
 /// At this stage in the boot process, the machine should be in a stable
-/// condition with IRQs disabled, the kernel heap initiated and logging
-/// enabled.
+/// condition with IRQs disabled (but ready to be enabled), the kernel heap
+/// initiated and logging enabled.
 pub fn kernel_entry(_info: BootInfo) -> ! {
     // We use a scope to ensure everything gets dropped before the scheduler starts
     {
@@ -34,14 +34,14 @@ pub fn kernel_entry(_info: BootInfo) -> ! {
         logln!("Deus started.");
 
         // Display CPU information
-        logln!("{}", llapi::cpu::singleton().info());
+        logln!("{}", llapi::mach::cpu::singleton().info());
 
         // Enable IRQs
-        unsafe { llapi::cpu::singleton().primary_core().enable_irqs(); }
+        unsafe { llapi::mach::cpu::singleton().primary_core().enable_irqs(); }
     }
 
     loop {
-        llapi::cpu::singleton().this_core().await_irq();
+        llapi::mach::cpu::singleton().this_core().await_irq();
     }
 }
 
@@ -51,7 +51,7 @@ pub fn panic(info: &PanicInfo) -> ! {
     logln!("[PANIC] {}", info);
     loop {
         // Disable IRQs and halt
-        for core in llapi::cpu::singleton().cores() {
+        for core in llapi::mach::cpu::singleton().cores() {
             unsafe { core.disable_irqs(); }
             core.await_irq();
         }
