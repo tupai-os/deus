@@ -21,6 +21,6 @@ macro_rules! log {
 #[macro_export]
 macro_rules! logln {
     () => (log!("\n"));
-    ($fmt:expr) => (log!(concat!($fmt, "\n")));
-    ($fmt:expr, $($arg:tt)*) => (log!(concat!($fmt, "\n"), $($arg)*));
+    ($fmt:expr) => ($crate::log!(concat!($fmt, "\n")));
+    ($fmt:expr, $($arg:tt)*) => ($crate::log!(concat!($fmt, "\n"), $($arg)*));
 }

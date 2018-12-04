@@ -87,6 +87,7 @@ pub extern "C" fn _start() -> ! {
     fault::init();
     hw::irq::init();
     hw::pic::init();
+    hw::pit::init();
 
     crate::kernel_entry(BootInfo)
 }

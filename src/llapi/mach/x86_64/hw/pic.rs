@@ -24,6 +24,12 @@ bitflags! {
     }
 }
 
+bitflags! {
+    struct Cmd: u8 {
+        const Eoi = 0x20;
+    }
+}
+
 // Ports
 
 struct Pic1Cmd;
@@ -64,4 +70,26 @@ pub fn init() {
     // Finally, mask all interrupts (initially)
     PIC1_DATA.write(0xFF);
     PIC2_DATA.write(0xFF);
+}
+
+pub fn unmask(vec: u8) {
+
+    let mask = !(1 << (vec & 0b111));
+
+    match vec {
+        0...7 => PIC1_DATA.write(PIC1_DATA.read() & mask),
+        8...15 => PIC2_DATA.write(PIC2_DATA.read() & mask),
+        _ => panic!("Attempted to unmask invalid interrupt vector {}"),
+    }
+}
+
+pub fn eoi(vec: u8) {
+    if vec < 8 {
+        PIC1_CMD.write(Cmd::Eoi.bits());
+    } else if vec < 16 {
+        PIC1_CMD.write(Cmd::Eoi.bits());
+        PIC2_CMD.write(Cmd::Eoi.bits());
+    } else {
+        panic!("Attempted to end interrupt for invalid vector {}");
+    }
 }

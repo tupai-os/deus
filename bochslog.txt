@@ -32,7 +32,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: UHCI
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7f768fe13010. after alignment, vector=0x7f768fe14000
+00000000000i[MEM0  ] allocated memory at 0x7f9f964b5010. after alignment, vector=0x7f9f964b6000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=256
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/share/bochs/BIOS-bochs-latest')
@@ -43,7 +43,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Oct 19 10:57:58 2018 (time0=1539943078)
+00000000000i[CMOS  ] Setting initial clock to: Tue Dec  4 22:52:51 2018 (time0=1543963971)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -70,12 +70,12 @@
 00000000000i[PLUGIN] init_dev of 'keyboard' plugin device by virtual method
 00000000000i[KBD   ] will paste characters every 400 keyboard ticks
 00000000000i[PLUGIN] init_dev of 'harddrv' plugin device by virtual method
-00000000000i[HD    ] CD on ata0-0: 'deus.iso'
-00000000000i[CD1   ] load cdrom with path='deus.iso'
+00000000000i[HD    ] CD on ata0-0: 'target/x86_64-deus/debug/bootimage-deus.bin'
+00000000000i[CD1   ] load cdrom with path='target/x86_64-deus/debug/bootimage-deus.bin'
 00000000000i[CD1   ] Opening image file as a cd.
 00000000000i[HD    ] Media present in CD-ROM drive
 00000000000e[CD1   ] expected cdrom image to be a multiple of 2048 bytes
-00000000000i[HD    ] Capacity is 176 sectors (0.34 MB)
+00000000000i[HD    ] Capacity is 177 sectors (0.35 MB)
 00000000000i[PLUGIN] init_dev of 'pci_ide' plugin device by virtual method
 00000000000i[DEV   ] PIIX3 PCI IDE controller present at device 1, function 1
 00000000000i[PLUGIN] init_dev of 'unmapped' plugin device by virtual method
@@ -160,64 +160,64 @@
 00000318749i[BIOS  ] Shutdown flag 0
 00000319332i[BIOS  ] ram_size=0x02000000
 00000319753i[BIOS  ] ram_end=32MB
-00000331851i[BIOS  ] Found 1 cpu(s)
-00000345435i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000673230i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001001159i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001001178i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001001197i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001001216i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001001226i[P2ISA ] write: ELCR2 = 0x0a
-00001001996i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001009719i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001011998i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001014116i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001014345i[PIDE  ] new BM-DMA address: 0xc000
-00001014961i[BIOS  ] region 4: 0x0000c000
-00001016975i[BIOS  ] PCI: bus=0 devfn=0x0a: vendor_id=0x8086 device_id=0x7020 class=0x0c03
-00001017179i[UHCI  ] new base address: 0xc020
-00001017795i[BIOS  ] region 4: 0x0000c020
-00001017923i[UHCI  ] new irq line = 9
-00001019818i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001020050i[ACPI  ] new irq line = 11
-00001020062i[ACPI  ] new irq line = 9
-00001020087i[ACPI  ] new PM base address: 0xb000
-00001020101i[ACPI  ] new SM base address: 0xb100
-00001020129i[PCI   ] setting SMRAM control register to 0x4a
-00001184222i[CPU0  ] Enter to System Management Mode
-00001184232i[CPU0  ] RSM: Resuming from System Management Mode
-00001348253i[PCI   ] setting SMRAM control register to 0x0a
-00001363160i[BIOS  ] MP table addr=0x000f9db0 MPC table addr=0x000f9ce0 size=0xc8
-00001364982i[BIOS  ] SMBIOS table addr=0x000f9dc0
-00001367163i[BIOS  ] ACPI tables: RSDP addr=0x000f9ee0 ACPI DATA addr=0x01ff0000 size=0xf72
-00001370375i[BIOS  ] Firmware waking vector 0x1ff00cc
-00001372170i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001372893i[BIOS  ] bios_table_cur_addr: 0x000f9f04
-00001500510i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00001500581i[BXVGA ] VBE known Display Interface b0c0
-00001500613i[BXVGA ] VBE known Display Interface b0c5
-00001503538i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002926447i[XGUI  ] charmap update. Font is 9 x 16
-00005285031i[BIOS  ] IDE time out
-01433396312i[BIOS  ] CDROM boot failure code : 0005
-01433451325p[BIOS  ] >>PANIC<< No bootable device.
-01433451325i[CPU0  ] CPU is in real mode (active)
-01433451325i[CPU0  ] CS.mode = 16 bit
-01433451325i[CPU0  ] SS.mode = 16 bit
-01433451325i[CPU0  ] EFER   = 0x00000000
-01433451325i[CPU0  ] | EAX=0000040a  EBX=0000cd24  ECX=00090004  EDX=00000402
-01433451325i[CPU0  ] | ESP=0000ffa8  EBP=0000ffac  ESI=000e0000  EDI=0000f782
-01433451325i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
-01433451325i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-01433451325i[CPU0  ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
-01433451325i[CPU0  ] |  DS:f000( 0005| 0|  0) 000f0000 0000ffff 0 0
-01433451325i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-01433451325i[CPU0  ] |  ES:0f7c( 0005| 0|  0) 0000f7c0 0000ffff 0 0
-01433451325i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-01433451325i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-01433451325i[CPU0  ] | EIP=0000054b (0000054a)
-01433451325i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
-01433451325i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-01433451325i[CMOS  ] Last time is 1539944511 (Fri Oct 19 11:21:51 2018)
-01433451325i[XGUI  ] Exit
-01433451325i[SIM   ] quit_sim called with exit code 1
+00000331891i[BIOS  ] Found 1 cpu(s)
+00000345475i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
+00000673270i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001001199i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001001218i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001001237i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001001256i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001001266i[P2ISA ] write: ELCR2 = 0x0a
+00001002036i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001009759i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001012038i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001014156i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001014385i[PIDE  ] new BM-DMA address: 0xc000
+00001015001i[BIOS  ] region 4: 0x0000c000
+00001017015i[BIOS  ] PCI: bus=0 devfn=0x0a: vendor_id=0x8086 device_id=0x7020 class=0x0c03
+00001017219i[UHCI  ] new base address: 0xc020
+00001017835i[BIOS  ] region 4: 0x0000c020
+00001017963i[UHCI  ] new irq line = 9
+00001019858i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001020090i[ACPI  ] new irq line = 11
+00001020102i[ACPI  ] new irq line = 9
+00001020127i[ACPI  ] new PM base address: 0xb000
+00001020141i[ACPI  ] new SM base address: 0xb100
+00001020169i[PCI   ] setting SMRAM control register to 0x4a
+00001184262i[CPU0  ] Enter to System Management Mode
+00001184272i[CPU0  ] RSM: Resuming from System Management Mode
+00001348293i[PCI   ] setting SMRAM control register to 0x0a
+00001363200i[BIOS  ] MP table addr=0x000f9db0 MPC table addr=0x000f9ce0 size=0xc8
+00001365022i[BIOS  ] SMBIOS table addr=0x000f9dc0
+00001367203i[BIOS  ] ACPI tables: RSDP addr=0x000f9ee0 ACPI DATA addr=0x01ff0000 size=0xf72
+00001370415i[BIOS  ] Firmware waking vector 0x1ff00cc
+00001372210i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001372933i[BIOS  ] bios_table_cur_addr: 0x000f9f04
+00001500550i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00001500621i[BXVGA ] VBE known Display Interface b0c0
+00001500653i[BXVGA ] VBE known Display Interface b0c5
+00001503578i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00001864917i[XGUI  ] charmap update. Font is 9 x 16
+00005285094i[BIOS  ] IDE time out
+01136655315i[BIOS  ] CDROM boot failure code : 0005
+01136710328p[BIOS  ] >>PANIC<< No bootable device.
+01136710328i[CPU0  ] CPU is in real mode (active)
+01136710328i[CPU0  ] CS.mode = 16 bit
+01136710328i[CPU0  ] SS.mode = 16 bit
+01136710328i[CPU0  ] EFER   = 0x00000000
+01136710328i[CPU0  ] | EAX=0000040a  EBX=0000cd24  ECX=00090004  EDX=00000402
+01136710328i[CPU0  ] | ESP=0000ffa8  EBP=0000ffac  ESI=000e0000  EDI=0000f782
+01136710328i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf ZF af PF cf
+01136710328i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+01136710328i[CPU0  ] |  CS:f000( 0004| 0|  0) 000f0000 0000ffff 0 0
+01136710328i[CPU0  ] |  DS:f000( 0005| 0|  0) 000f0000 0000ffff 0 0
+01136710328i[CPU0  ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01136710328i[CPU0  ] |  ES:0f7c( 0005| 0|  0) 0000f7c0 0000ffff 0 0
+01136710328i[CPU0  ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01136710328i[CPU0  ] |  GS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+01136710328i[CPU0  ] | EIP=0000054b (0000054a)
+01136710328i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
+01136710328i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+01136710328i[CMOS  ] Last time is 1543965107 (Tue Dec  4 23:11:47 2018)
+01136710328i[XGUI  ] Exit
+01136710328i[SIM   ] quit_sim called with exit code 1
