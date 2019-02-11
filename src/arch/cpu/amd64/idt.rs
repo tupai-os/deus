@@ -5,12 +5,12 @@ use bitflags::bitflags;
 
 bitflags! {
     struct Attributes: u8 {
-        const IntGate = 0b00001110;
-        const Ring0   = 0b00000000;
-        const Ring1   = 0b00100000;
-        const Ring2   = 0b01000000;
-        const Ring3   = 0b01100000;
-        const Present = 0b10000000;
+        const INT_GATE = 0b00001110;
+        const RING0    = 0b00000000;
+        const RING1    = 0b00100000;
+        const RING2    = 0b01000000;
+        const RING3    = 0b01100000;
+        const PRESENT  = 0b10000000;
     }
 }
 
@@ -46,9 +46,9 @@ impl Entry {
             base_hi: (addr >> 32) as u32,
             selector: 8, // TODO: Find the correct GDT selector
             attrib: (
-                Attributes::IntGate |
-                Attributes::Ring0 |
-                Attributes::Present
+                Attributes::INT_GATE |
+                Attributes::RING0 |
+                Attributes::PRESENT
             ).bits(),
             _zero0: 0,
             _zero1: 0,

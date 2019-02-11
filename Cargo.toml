@@ -13,8 +13,17 @@ panic = "abort"
 [package.metadata.bootimage]
 default-target = "x86_64-deus.json"
 
+[features]
+arch_x86_64 = ["cpu_amd64", "family_x86"]
+cpu_amd64 = []
+family_x86 = []
+
+default = ["arch_x86_64"]
+
 [dependencies]
-bootloader_precompiled = "0.2"
+bootloader_precompiled = "0.3"
 spin = "0.4"
 volatile = "0.2"
 bitflags = "1.0"
+arraydeque = { version = "0.4", default-features = false }
+lazy_static = { version = "1.2", default-features = false, features = ["spin_no_std"] }

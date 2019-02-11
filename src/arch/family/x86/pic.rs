@@ -2,31 +2,31 @@
 use bitflags::bitflags;
 
 // Local
-use super::super::port::{Port, PortLock};
+use crate::arch::cpu::active::port::{Port, PortLock};
 
 bitflags! {
     struct Icw1: u8 {
-        const Init     = 0b00010000;
-        const Icw4     = 0b00000001;
-        const Single   = 0b00000010;
-        const Interval = 0b00000100;
-        const Level    = 0b00001000;
+        const INIT     = 0b00010000;
+        const ICW4     = 0b00000001;
+        const SINGLE   = 0b00000010;
+        const INTERVAL = 0b00000100;
+        const LEVEL    = 0b00001000;
     }
 }
 
 bitflags! {
     struct Icw4: u8 {
-        const Mode8086 = 0b00000001;
-        const Auto     = 0b00000010;
-        const Slave    = 0b00001000;
-        const Master   = 0b00011000;
-        const Nested   = 0b00010000;
+        const MODE8086 = 0b00000001;
+        const AUTO     = 0b00000010;
+        const SLAVE    = 0b00001000;
+        const MASTER   = 0b00011000;
+        const NESTED   = 0b00010000;
     }
 }
 
 bitflags! {
     struct Cmd: u8 {
-        const Eoi = 0x20;
+        const EOI = 0x20;
     }
 }
 
@@ -50,8 +50,8 @@ static PIC2_DATA: PortLock<Pic2Data> = PortLock::new();
 
 pub fn init() {
     // Initiate configuration
-    PIC1_CMD.write((Icw1::Init | Icw1::Icw4).bits());
-    PIC2_CMD.write((Icw1::Init | Icw1::Icw4).bits());
+    PIC1_CMD.write((Icw1::INIT | Icw1::ICW4).bits());
+    PIC2_CMD.write((Icw1::INIT | Icw1::ICW4).bits());
 
     // Pass 3 initiation bytes to each PIC
 
@@ -64,8 +64,8 @@ pub fn init() {
     PIC2_DATA.write(2); // Slave
 
     // 3) Tell them to operate in 8086 mode
-    PIC1_DATA.write(Icw4::Mode8086.bits());
-    PIC2_DATA.write(Icw4::Mode8086.bits());
+    PIC1_DATA.write(Icw4::MODE8086.bits());
+    PIC2_DATA.write(Icw4::MODE8086.bits());
 
     // Finally, mask all interrupts (initially)
     PIC1_DATA.write(0xFF);
@@ -85,10 +85,10 @@ pub fn unmask(vec: u8) {
 
 pub fn eoi(vec: u8) {
     if vec < 8 {
-        PIC1_CMD.write(Cmd::Eoi.bits());
+        PIC1_CMD.write(Cmd::EOI.bits());
     } else if vec < 16 {
-        PIC1_CMD.write(Cmd::Eoi.bits());
-        PIC2_CMD.write(Cmd::Eoi.bits());
+        PIC1_CMD.write(Cmd::EOI.bits());
+        PIC2_CMD.write(Cmd::EOI.bits());
     } else {
         panic!("Attempted to end interrupt for invalid vector {}");
     }

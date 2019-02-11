@@ -2,19 +2,17 @@
 use bitflags::bitflags;
 
 // Local
-use super::{
-    pic,
-    super::{
-        idt,
-        port::{Port, PortLock},
-    },
+use super::pic;
+use crate::arch::cpu::active::{
+    idt,
+    port::{Port, PortLock},
 };
 use crate::log;
 
 bitflags! {
     struct Cfg: u8 {
-        const SquareWave = 0b00000110;
-        const LoHi       = 0b00110000;
+        const SQUARE_WAVE = 0b00000110;
+        const LO_HI       = 0b00110000;
     }
 }
 
@@ -45,7 +43,7 @@ pub fn init() {
 
 fn set_rate(hz: u32) {
     // Begin PIT configuration
-    CMD.write((Cfg::SquareWave | Cfg::LoHi).bits());
+    CMD.write((Cfg::SQUARE_WAVE | Cfg::LO_HI).bits());
 
     // Calculate divisor from hertz
     let div = 1193180 / hz;

@@ -5,22 +5,22 @@ use bitflags::bitflags;
 
 bitflags! {
     struct Access: u8 {
-        const ReadWrite  = 0b00000010;
-        const Execute    = 0b00001000;
-        const Present    = 0b10000000;
-        const One        = 0b00010000;
-        const Ring0      = 0b00000000;
-        const Ring1      = 0b00100000;
-        const Ring2      = 0b01000000;
-        const Ring3      = 0b01100000;
-        const Conforming = 0b00000100;
+        const READ_WRITE  = 0b00000010;
+        const EXECUTE     = 0b00001000;
+        const PRESENT     = 0b10000000;
+        const ONE         = 0b00010000;
+        const RING0       = 0b00000000;
+        const RING1       = 0b00100000;
+        const RING2       = 0b01000000;
+        const RING3       = 0b01100000;
+        const CONFORMING  = 0b00000100;
     }
 }
 
 bitflags! {
     struct Gran: u8 {
-        const Page = 0b00001000;
-        const Long = 0b00000010;
+        const PAGE = 0b00001000;
+        const LONG = 0b00000010;
     }
 }
 
@@ -57,7 +57,7 @@ impl Entry {
 
             access: access.bits(),
             gran:
-                ((Gran::Page | Gran::Long).bits() << 4) |
+                ((Gran::PAGE | Gran::LONG).bits() << 4) |
                 ((lim >> 16) as u8 & 0x0F),
         }
     }
@@ -84,24 +84,24 @@ impl Table {
 
     fn default() -> Self {
         let code_access =
-            Access::ReadWrite |
-            Access::Execute |
-            Access::One |
-            Access::Conforming |
-            Access::Present;
+            Access::READ_WRITE |
+            Access::EXECUTE |
+            Access::ONE |
+            Access::CONFORMING |
+            Access::PRESENT;
 
         let data_access =
-            Access::ReadWrite |
-            Access::One |
-            Access::Present;
+            Access::READ_WRITE |
+            Access::ONE |
+            Access::PRESENT;
 
         Self {
             entries: [
                 Entry::empty(),
-                Entry::new(0x0, 0xFFFFF, code_access | Access::Ring0),
-                Entry::new(0x0, 0xFFFFF, data_access | Access::Ring0),
-                Entry::new(0x0, 0xFFFFF, code_access | Access::Ring3),
-                Entry::new(0x0, 0xFFFFF, data_access | Access::Ring3),
+                Entry::new(0x0, 0xFFFFF, code_access | Access::RING0),
+                Entry::new(0x0, 0xFFFFF, data_access | Access::RING0),
+                Entry::new(0x0, 0xFFFFF, code_access | Access::RING3),
+                Entry::new(0x0, 0xFFFFF, data_access | Access::RING3),
             ],
         }
     }

@@ -1,7 +1,7 @@
 global_asm!(include_str!("irq.s"));
 
 // Local
-use super::super::idt;
+use crate::arch::cpu::active::idt;
 
 extern "C" {
 	fn _pit_handler();
@@ -9,12 +9,6 @@ extern "C" {
 	fn _com2_handler();
 	fn _com1_handler();
 	fn _spurious_handler();
-}
-
-#[no_mangle]
-extern "C" fn kbd_handler(frame: *const ()) -> *const () {
-    panic!("Keyboard interrupt!");
-    frame
 }
 
 #[no_mangle]
