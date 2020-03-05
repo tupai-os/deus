@@ -1,6 +1,6 @@
-// Library
 use core::fmt;
-use spin::{Once, RwLock};
+use spin::Once;
+use crate::util::IrqLock;
 
 // Kernel
 use crate::util::ioface::{Framebuffer, IoError, Write};
@@ -51,7 +51,7 @@ impl Write<char> for Tty {
             c if c.is_ascii_graphic() || c == ' ' => {
                 // TODO: Make this driver agnostic
                 use crate::driver::vga;
-                vga::singleton().write().textmode_mut().set(
+                vga::singleton().lock().textmode_mut().set(
                     self.cursor.0,
                     self.cursor.1,
                     if c.is_ascii() {
@@ -78,10 +78,10 @@ impl fmt::Write for Tty {
     }
 }
 
-static DEFAULT: Once<RwLock<Tty>> = Once::new();
+static DEFAULT: Once<IrqLock<Tty>> = Once::new();
 
 pub fn default_do_for_mut<R, F: FnOnce(&mut Tty) -> R>(f: F) -> Result<R, IoError> {
     Ok(f(&mut DEFAULT
-        .call_once(|| RwLock::new(Tty::singleton()))
-        .write()))
+        .call_once(|| IrqLock::new(Tty::singleton()))
+        .lock()))
 }

@@ -1,7 +1,6 @@
 global_asm!(include_str!("fault.s"));
 
-// Local
-use super::super::super::super::{log, logln}; // TODO: Why is this needed?!
+use crate::{log, logln};
 use super::{idt, isr::StackFrame};
 
 extern "C" {

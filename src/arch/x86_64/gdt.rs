@@ -1,7 +1,11 @@
-// Library
 use core::mem;
 use spin::RwLock;
 use bitflags::bitflags;
+
+pub const KERNEL_CODE_SELECTOR: usize = mem::size_of::<Entry>() * 1;
+pub const KERNEL_DATA_SELECTOR: usize = mem::size_of::<Entry>() * 2;
+pub const USER_CODE_SELECTOR: usize = mem::size_of::<Entry>() * 3;
+pub const USER_DATA_SELECTOR: usize = mem::size_of::<Entry>() * 4;
 
 bitflags! {
     struct Access: u8 {
@@ -131,7 +135,7 @@ impl Table {
             mov %ax, %es;
             mov %ax, %gs;
             mov %ax, %ss;
-            " :: "r"(&ptr) : "memory"
+            " :: "r"(&ptr) : "memory" : "volatile"
         );
     }
 }

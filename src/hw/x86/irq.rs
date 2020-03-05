@@ -1,7 +1,7 @@
-global_asm!(include_str!("irq.s"));
+#[cfg(target_arch = "x86_64")]
+use crate::arch::x86_64::idt;
 
-// Local
-use crate::arch::cpu::active::idt;
+global_asm!(include_str!("irq.s"));
 
 extern "C" {
 	fn _pit_handler();

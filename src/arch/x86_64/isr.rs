@@ -1,8 +1,8 @@
-// Library
 use core::fmt;
+use super::gdt;
 
 #[repr(C, packed)]
-#[derive(Copy, Clone, Default)]
+#[derive(Copy, Clone, Default, Debug)]
 pub struct StackFrame {
 	rbp: u64,
 	r15: u64,
@@ -28,6 +28,20 @@ pub struct StackFrame {
 	ss: u64,
 }
 
+impl StackFrame {
+    pub fn new_thread<T>(entry: fn(*mut T), arg: *mut T, stack: *const u8) -> Self {
+        Self {
+            rip: entry as u64,
+            rsi: arg as u64,
+            rbp: stack as u64,
+            rsp: stack as u64,
+            cs: gdt::KERNEL_CODE_SELECTOR as u64,
+            rflags: 0x200,
+            ss: gdt::KERNEL_DATA_SELECTOR as u64,
+            ..Self::default()
+        }
+    }
+}
 
 impl fmt::Display for StackFrame {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

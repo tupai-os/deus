@@ -4,44 +4,89 @@
 // Suppress warnings when testing
 #![cfg_attr(test, allow(dead_code, unused_macros, unused_imports))]
 
-#![feature(asm, global_asm)]
+#![feature(
+    asm,
+    global_asm,
+    alloc_error_handler,
+    ptr_offset_from,
+    const_fn,
+    maybe_uninit_extra,
+    maybe_uninit_ref,
+    exclusive_range_pattern,
+)]
 
 #[macro_use]
-extern crate lazy_static;
+extern crate alloc;
 
-pub mod arch;
-pub mod driver;
-pub mod util;
-pub mod vdev;
+mod arch;
+mod hw;
+mod driver;
+mod mem;
+mod util;
+mod vdev;
+mod sched;
+mod ipc;
+mod iface;
 
 #[macro_use]
-pub mod log;
-pub mod bootinfo;
+mod log;
+mod startup;
 
-// Library
-use core::panic::PanicInfo;
+// Reexports
+pub use arch::hal;
 
-// Kernel
-use crate::bootinfo::BootInfo;
+use core::{
+    panic::PanicInfo,
+    mem::MaybeUninit,
+};
+use bootloader::BootInfo;
+use crate::mem::Heap;
+
+#[global_allocator]
+static mut GLOBAL_ALLOCATOR: Heap = Heap::uninit();
+static mut HEAP: [u8; 65536] = [0u8; 65536];
+
+static mut BOOT_INFO: MaybeUninit<&'static BootInfo> = MaybeUninit::uninit();
+
+pub fn boot_info() -> &'static BootInfo {
+    unsafe { BOOT_INFO.read() }
+}
 
 /// The platform-agnostic kernel start point
 ///
 /// At this stage in the boot process, the machine should be in a stable
 /// condition with IRQs disabled (but ready to be enabled), the kernel heap
 /// initiated and logging enabled.
-pub fn kernel_start(_info: BootInfo) -> ! {
-    // Display a welcome message
-    logln!("Deus started.");
+pub fn kernel_start(boot_info: &'static BootInfo) -> ! {
+    // Register boot info
+    unsafe { BOOT_INFO.write(boot_info); }
 
-    // Display CPU information
-    logln!("{}", arch::cpu::active::vendor());
+    // Init heap
+    unsafe { GLOBAL_ALLOCATOR.init(&mut HEAP); }
 
-    // Enable IRQs
-    unsafe { arch::cpu::active::enable_irqs(0); }
+    // Initiate subsystems
+    ipc::init_exchange();
+    sched::init_threading();
+    startup::init_drivers();
 
-    loop {
-        arch::cpu::active::await_irqs(0);
+    for channel in ipc::exchange().list() {
+        logln!(":: {}", channel);
     }
+
+    sched::spawn_thread(|| {
+        let rx = ipc::exchange()
+            .connect_rx::<iface::Char>("kbd")
+            .unwrap();
+
+        while let Ok(c) = rx.recv() {
+            use core::convert::TryFrom;
+            log!("{}", char::try_from(c.0).unwrap());
+        }
+    });
+
+    //assert!(!hal::irqs_enabled());
+    unsafe { hal::enable_irqs(); }
+    loop { hal::await_irqs(); }
 }
 
 #[cfg(not(test))]
@@ -50,8 +95,13 @@ pub fn panic(info: &PanicInfo) -> ! {
     logln!("[PANIC] {}", info);
     loop {
         unsafe {
-            arch::cpu::active::disable_irqs(0);
-            arch::cpu::active::await_irqs(0);
+            hal::disable_irqs();
+            hal::await_irqs();
         }
     }
+}
+
+#[alloc_error_handler]
+fn alloc_error_handler(layout: alloc::alloc::Layout) -> ! {
+    panic!("Failed to allocate {:?}", layout);
 }

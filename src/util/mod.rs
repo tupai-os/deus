@@ -1,6 +1,13 @@
 pub mod ioface;
+pub mod store;
+pub mod irq_lock;
 
-// Library
+// Reexports
+pub use self::{
+    store::{Id, Store},
+    irq_lock::IrqLock,
+};
+
 use volatile::Volatile;
 
 pub fn wait_cycles(cycles: usize) {

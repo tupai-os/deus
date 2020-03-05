@@ -1,8 +1,6 @@
-// Library
 use bitflags::bitflags;
-
-// Local
-use crate::arch::cpu::active::port::{Port, PortLock};
+#[cfg(target_arch = "x86_64")]
+use crate::arch::x86_64::port::{Port, PortLock};
 
 bitflags! {
     struct Icw1: u8 {
@@ -73,12 +71,11 @@ pub fn init() {
 }
 
 pub fn unmask(vec: u8) {
-
     let mask = !(1 << (vec & 0b111));
 
     match vec {
-        0...7 => PIC1_DATA.write(PIC1_DATA.read() & mask),
-        8...15 => PIC2_DATA.write(PIC2_DATA.read() & mask),
+        0..8 => PIC1_DATA.write(PIC1_DATA.read() & mask),
+        8..16 => PIC2_DATA.write(PIC2_DATA.read() & mask),
         _ => panic!("Attempted to unmask invalid interrupt vector {}"),
     }
 }
@@ -87,8 +84,8 @@ pub fn eoi(vec: u8) {
     if vec < 8 {
         PIC1_CMD.write(Cmd::EOI.bits());
     } else if vec < 16 {
-        PIC1_CMD.write(Cmd::EOI.bits());
         PIC2_CMD.write(Cmd::EOI.bits());
+        PIC1_CMD.write(Cmd::EOI.bits());
     } else {
         panic!("Attempted to end interrupt for invalid vector {}");
     }

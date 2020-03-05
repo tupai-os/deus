@@ -8,17 +8,19 @@ A portable kernel written in Rust.
 
 Install `rustup`. Instructions are available [here](https://www.rust-lang.org/install.html).
 
-Install and switch to the latest Rust nightly as the default toolchain.
+Install and switch to the latest Rust nightly as the default toolchain (from within the repository directory).
 
 ```
-rustup default nightly
+rustup override set nightly
 ```
 
 Install build prerequisites.
 
 ```
+cargo install bootimage
 cargo install cargo-xbuild
-cargo install bootimage --version "0.5"
+rustup component add rust-src
+rustup component add llvm-tools-preview
 ```
 
 Build the kernel for the default target using `bootimage`.
@@ -41,7 +43,7 @@ cargo xbuild --target x86_64-deus.json
 
 ## Running
 
-Run the disk image using QEMU through `bootimage`.
+Run the disk image using QEMU through `bootimage` (requires `qemu-system-x86`).
 
 ```
 bootimage run

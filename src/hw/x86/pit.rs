@@ -1,13 +1,12 @@
-// Library
 use bitflags::bitflags;
-
-// Local
 use super::pic;
-use crate::arch::cpu::active::{
-    idt,
-    port::{Port, PortLock},
+#[cfg(target_arch = "x86_64")]
+use crate::arch::x86_64::port::{Port, PortLock};
+use crate::{
+    log,
+    hal::StackFrame,
+    sched::preempt,
 };
-use crate::log;
 
 bitflags! {
     struct Cfg: u8 {
@@ -29,15 +28,16 @@ impl Port for Data { const ADDR: u16 = 0x40; }
 static DATA: PortLock<Data> = PortLock::new();
 
 #[no_mangle]
-extern "C" fn pit_handler(frame: *const ()) -> *const () {
-    log!("!");
+extern "C" fn pit_handler(frame: *mut StackFrame) -> *mut StackFrame {
+    let frame = preempt(frame);
 
     pic::eoi(IRQ_VEC);
+
     frame
 }
 
 pub fn init() {
-    set_rate(100);
+    set_rate(1000);
     pic::unmask(IRQ_VEC);
 }
 

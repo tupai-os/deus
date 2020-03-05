@@ -1,4 +1,3 @@
-// Library
 use core::mem;
 use spin::RwLock;
 use bitflags::bitflags;

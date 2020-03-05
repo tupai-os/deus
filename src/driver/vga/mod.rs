@@ -1,7 +1,6 @@
-// Library
 use core::slice;
-use spin::RwLock;
 use volatile::Volatile;
+use crate::util::IrqLock;
 
 // Kernel
 use crate::util::ioface::{Framebuffer, IoError, Write};
@@ -83,8 +82,8 @@ impl Vga {
     }
 }
 
-static SINGLETON: RwLock<Vga> = RwLock::new(Vga::singleton());
+static SINGLETON: IrqLock<Vga> = IrqLock::new(Vga::singleton());
 
-pub fn singleton() -> &'static RwLock<Vga> {
+pub fn singleton() -> &'static IrqLock<Vga> {
     &SINGLETON
 }

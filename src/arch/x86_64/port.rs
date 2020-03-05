@@ -1,18 +1,15 @@
-// Library
 use core::marker::PhantomData;
 use spin::Mutex;
-
-// Kernel
 use crate::util::wait_cycles;
 
 const DELAY_CYCLES: usize = 150;
 
-unsafe fn out8(port: u16, val: u8) {
+pub unsafe fn out8(port: u16, val: u8) {
     asm!("outb %al, %dx" :: "{dx}"(port), "{al}"(val) :: "volatile");
     wait_cycles(DELAY_CYCLES);
 }
 
-unsafe fn in8(port: u16) -> u8 {
+pub unsafe fn in8(port: u16) -> u8 {
     wait_cycles(DELAY_CYCLES);
     let val: u8;
     asm!("inb %dx, %al" : "={al}"(val) : "{dx}"(port) :: "volatile");
