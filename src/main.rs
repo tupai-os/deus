@@ -57,9 +57,11 @@ pub fn boot_info() -> &'static BootInfo {
 /// At this stage in the boot process, the machine should be in a stable
 /// condition with IRQs disabled (but ready to be enabled), the kernel heap
 /// initiated and logging enabled.
-pub fn kernel_start(boot_info: &'static BootInfo) -> ! {
+pub fn kernel_start(info: &'static BootInfo) -> ! {
     // Register boot info
-    unsafe { BOOT_INFO.write(boot_info); }
+    unsafe { BOOT_INFO.write(info); }
+
+    logln!("BootInfo is as {:?}", boot_info() as *const _);
 
     // Init heap
     unsafe { GLOBAL_ALLOCATOR.init(&mut HEAP); }
