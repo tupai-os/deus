@@ -28,7 +28,7 @@ impl Port for Data { const ADDR: u16 = 0x40; }
 static DATA: PortLock<Data> = PortLock::new();
 
 #[no_mangle]
-extern "C" fn pit_handler(frame: *mut StackFrame) -> *mut StackFrame {
+pub extern "C" fn pit_handler(frame: *mut StackFrame) -> *mut StackFrame {
     let frame = preempt(frame);
 
     pic::eoi(IRQ_VEC);

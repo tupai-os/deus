@@ -1,7 +1,7 @@
 use spin::Mutex;
 #[cfg(target_arch = "x86_64")]
 use crate::{
-    arch::x86_64::port::{in8, out8},
+    arch::x86_64::{port::{in8, out8}, isr::StackFrame},
     hw::x86::pic,
     startup::DriverInfo,
     ipc, iface,
@@ -88,7 +88,7 @@ const SCANCODES_US: [char; 128] = [
 ];
 
 #[no_mangle]
-extern "C" fn kbd_handler(frame: *const ()) -> *const () {
+pub extern "C" fn kbd_handler(frame: *mut StackFrame) -> *mut StackFrame {
     while unsafe { in8(PORT_STATUS) } & 1 > 0 { // Serial port is not empty
         let scancode = unsafe { in8(PORT_DATA) };
         if scancode & KEY_PRESSED == 0 {

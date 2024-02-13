@@ -1,8 +1,11 @@
-global_asm!(include_str!("fault.s"));
+use core::arch::global_asm;
+
+//global_asm!(include_str!("fault.s"));
 
 use crate::{log, logln};
 use super::{idt, isr::StackFrame};
 
+/*
 extern "C" {
 	fn _fault_handler0();
 	fn _fault_handler1();
@@ -29,6 +32,7 @@ extern "C" {
 	fn _fault_handler30();
     // Reserved
 }
+*/
 
 #[repr(usize)]
 pub enum Exception {
@@ -93,6 +97,7 @@ extern "C" fn misc_handler(frame: *mut StackFrame) -> *mut StackFrame {
     frame
 }
 
+/*
 pub fn init() {
     let mut idt_guard = idt::singleton().write();
     idt_guard.set_fault_handler(0, idt::Entry::from_addr(_fault_handler0 as u64));
@@ -120,4 +125,80 @@ pub fn init() {
     idt_guard.set_fault_handler(30, idt::Entry::from_addr(_fault_handler30 as u64));
     // Reserved
     unsafe { idt_guard.flush(); }
+}
+*/
+
+macro_rules! handlers {
+    ($($irq:literal => $handler:path),* $(,)?) => {
+        pub fn init() {
+            let mut idt = idt::singleton().write();
+            $({
+                const _: extern "C" fn(*mut StackFrame) -> *mut StackFrame = $handler;
+                #[naked]
+                unsafe fn isr() {
+                    core::arch::asm!(
+                        // Push registers
+                        "push 0", // TODO: Don't push $0 as a fake error code
+                        stringify!(push $irq),
+                        "push rax",
+                        "push rbx",
+                        "push rcx",
+                        "push rdx",
+                        "push rsi",
+                        "push rdi",
+                        "push r8",
+                        "push r9",
+                        "push r10",
+                        "push r11",
+                        "push r12",
+                        "push r13",
+                        "push r14",
+                        "push r15",
+                        "push rbp",
+                        "cld",
+                        
+                        // Call handler with old stack frame
+                        "mov rdi, rsp",
+                        "call {0}", 
+                        "mov rsp, rax", // Swap out new stack frame
+                        
+                        // Pop registers
+                        "pop rbp",
+                        "pop r15",
+                        "pop r14",
+                        "pop r13",
+                        "pop r12",
+                        "pop r11",
+                        "pop r10",
+                        "pop r9",
+                        "pop r8",
+                        "pop rdi",
+                        "pop rsi",
+                        "pop rdx",
+                        "pop rcx",
+                        "pop rbx",
+                        "pop rax",
+                        
+                        // Remove error and ID from stack
+                        "add rsp, 16",
+                        
+                        // Return from interrupt
+                        "iretq",
+                        sym $handler,
+                        options(noreturn),
+                    );
+                }
+                idt.set_fault_handler($irq, idt::Entry::from_addr(isr as u64));
+            })*
+            unsafe { idt.flush(); }
+        }
+    };
+}
+
+handlers! {
+    0 => divzero_handler,
+    1 => debug_handler,
+    13 => gpf_handler,
+    14 => pagefault_handler,
+    // TODO: others
 }

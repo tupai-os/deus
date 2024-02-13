@@ -11,7 +11,6 @@ panic = "abort"
 panic = "abort"
 
 [package.metadata.bootimage]
-default-target = "x86_64-deus.json"
 
 [package.metadata.bootloader]
 kernel-stack-address = "0xFFFFFF8000000000"
@@ -23,11 +22,12 @@ physical-memory-offset = "0xFFFF800000000000"
 default = []
 
 [dependencies]
-bootloader = { version = "0.8", features = ["map_physical_memory"] }
-spin = "0.5"
+bootloader = { version = "0.9.23", features = ["map_physical_memory"] }
+spin = "0.9.8"
 volatile = "0.2"
 bitflags = "1.0"
-linked_list_allocator = "0.7"
+linked_list_allocator = "0.10"
 serde = { version = "1.0", default-features = false }
 serde_derive = { version = "1.0", default-features = false }
-pinecone = "0.2"
+pinecone = "0.2.5"
+x86 = "0.52"

@@ -22,7 +22,7 @@ impl Heap {
             .inner
             .lock()
             .write(InnerHeap::new(
-                (region as *mut _ as *const u8) as usize,
+                region.as_mut_ptr(),
                 region.len(),
             ));
     }
@@ -33,7 +33,7 @@ unsafe impl GlobalAlloc for Heap {
         self
             .inner
             .lock()
-            .get_mut()
+            .assume_init_mut()
             .allocate_first_fit(layout)
             .map(|ptr| ptr.as_ptr())
             .unwrap_or(core::ptr::null_mut())
@@ -43,7 +43,7 @@ unsafe impl GlobalAlloc for Heap {
         self
             .inner
             .lock()
-            .get_mut()
+            .assume_init_mut()
             .deallocate(NonNull::new_unchecked(ptr), layout);
     }
 }

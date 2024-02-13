@@ -1,19 +1,16 @@
-use core::marker::PhantomData;
+use core::{marker::PhantomData, arch::asm};
 use spin::Mutex;
 use crate::util::wait_cycles;
 
 const DELAY_CYCLES: usize = 150;
 
 pub unsafe fn out8(port: u16, val: u8) {
-    asm!("outb %al, %dx" :: "{dx}"(port), "{al}"(val) :: "volatile");
-    wait_cycles(DELAY_CYCLES);
+    ::x86::io::outb(port, val)
 }
 
 pub unsafe fn in8(port: u16) -> u8 {
     wait_cycles(DELAY_CYCLES);
-    let val: u8;
-    asm!("inb %dx, %al" : "={al}"(val) : "{dx}"(port) :: "volatile");
-    val
+    ::x86::io::inb(port)
 }
 
 // PortLock

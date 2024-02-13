@@ -1,4 +1,4 @@
-use core::mem;
+use core::{mem, arch::asm};
 use spin::RwLock;
 use bitflags::bitflags;
 
@@ -97,7 +97,7 @@ impl Table {
 
     pub unsafe fn flush(&self) {
         let ptr = self.get_ptr();
-        asm!("lidt ($0)" :: "r"(&ptr) : "memory");
+        asm!("lidt [{0}]", in(reg) &ptr);
     }
 }
 

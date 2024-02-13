@@ -1,4 +1,4 @@
-use core::mem;
+use core::{mem, arch::asm};
 use spin::RwLock;
 use bitflags::bitflags;
 
@@ -127,15 +127,15 @@ impl Table {
     #[allow(dead_code)]
     pub unsafe fn flush(&self) {
         let ptr = self.get_ptr();
-        asm!("
-            lgdt ($0);
-            mov $$0x10, %ax;
-            mov %ax, %ds;
-            mov %ax, %fs;
-            mov %ax, %es;
-            mov %ax, %gs;
-            mov %ax, %ss;
-            " :: "r"(&ptr) : "memory" : "volatile"
+        asm!(
+            "lgdt [{0}]",
+            "mov ax, 0x10",
+            "mov ds, ax",
+            "mov fs, ax",
+            "mov es, ax",
+            "mov gs, ax",
+            "mov ss, ax",
+            in(reg) &ptr,
         );
     }
 }

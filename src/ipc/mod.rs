@@ -107,7 +107,7 @@ pub fn init_exchange() {
 }
 
 pub fn exchange<'a>() -> IrqLockGuard<'a, Exchange> {
-    unsafe { EXCHANGE.get_mut() }.lock()
+    unsafe { EXCHANGE.assume_init_mut() }.lock()
 }
 
 #[derive(Clone)]
@@ -115,7 +115,7 @@ pub struct Tx<T>(Id<Channel>, PhantomData<T>);
 
 impl<T> Tx<T> {
     pub fn send(&self, msg: T) -> Result<(), IpcError> where T: Serialize {
-        let mut exchange = unsafe { EXCHANGE.get_mut() }.lock();
+        let mut exchange = unsafe { EXCHANGE.assume_init_mut() }.lock();
 
         exchange
             .channels
@@ -138,9 +138,8 @@ pub struct Rx<T>(Id<Channel>, PhantomData<T>);
 
 impl<T> Rx<T> {
     pub fn recv(&self) -> Result<T, IpcError> where T: DeserializeOwned {
-        let mut exchange = unsafe { EXCHANGE.get_mut() }.lock();
-
         loop {
+            let mut exchange = unsafe { EXCHANGE.assume_init_mut() }.lock();
             if let Some(bytes) = exchange
                 .channels
                 .get_mut(self.0)

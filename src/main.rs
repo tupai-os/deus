@@ -5,14 +5,9 @@
 #![cfg_attr(test, allow(dead_code, unused_macros, unused_imports))]
 
 #![feature(
-    asm,
-    global_asm,
     alloc_error_handler,
-    ptr_offset_from,
-    const_fn,
-    maybe_uninit_extra,
-    maybe_uninit_ref,
     exclusive_range_pattern,
+    naked_functions,
 )]
 
 #[macro_use]
@@ -38,18 +33,19 @@ pub use arch::hal;
 use core::{
     panic::PanicInfo,
     mem::MaybeUninit,
+    cell::UnsafeCell,
 };
 use bootloader::BootInfo;
 use crate::mem::Heap;
 
 #[global_allocator]
 static mut GLOBAL_ALLOCATOR: Heap = Heap::uninit();
-static mut HEAP: [u8; 65536] = [0u8; 65536];
+static mut HEAP: UnsafeCell<[u8; 65536 * 8]> = UnsafeCell::new([0u8; 65536 * 8]);
 
 static mut BOOT_INFO: MaybeUninit<&'static BootInfo> = MaybeUninit::uninit();
 
 pub fn boot_info() -> &'static BootInfo {
-    unsafe { BOOT_INFO.read() }
+    unsafe { BOOT_INFO.assume_init_ref() }
 }
 
 /// The platform-agnostic kernel start point
@@ -64,7 +60,7 @@ pub fn kernel_start(info: &'static BootInfo) -> ! {
     logln!("BootInfo is as {:?}", boot_info() as *const _);
 
     // Init heap
-    unsafe { GLOBAL_ALLOCATOR.init(&mut HEAP); }
+    unsafe { GLOBAL_ALLOCATOR.init(HEAP.get_mut()); }
 
     // Initiate subsystems
     ipc::init_exchange();

@@ -4,6 +4,7 @@ pub mod isr;
 pub mod fault;
 pub mod port;
 
+use core::arch::asm;
 use bootloader::entry_point;
 use crate::{hw, BootInfo};
 
@@ -26,20 +27,20 @@ pub mod hal {
     pub use isr::StackFrame;
 
     pub unsafe fn enable_irqs() {
-        asm!("sti" :::: "volatile");
+        asm!("sti");
     }
 
     pub unsafe fn disable_irqs() {
-        asm!("cli" :::: "volatile");
+        asm!("cli");
     }
 
     pub fn await_irqs() {
-        unsafe { asm!("hlt" :::: "volatile"); }
+        unsafe { asm!("hlt"); }
     }
 
     pub fn irqs_enabled() -> bool {
         let val: u64;
-        unsafe { asm!("pushf; pop %rax" : "=r{rax}"(val) :: "rax" : "volatile"); }
+        unsafe { asm!("pushf; pop {0}", out(reg) val); }
         val & (1 << 9) > 0
     }
 }

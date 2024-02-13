@@ -1,7 +1,7 @@
 use core::fmt;
 use super::gdt;
 
-#[repr(C, packed)]
+#[repr(C, align(8))]
 #[derive(Copy, Clone, Default, Debug)]
 pub struct StackFrame {
 	rbp: u64,
@@ -32,7 +32,7 @@ impl StackFrame {
     pub fn new_thread<T>(entry: fn(*mut T), arg: *mut T, stack: *const u8) -> Self {
         Self {
             rip: entry as u64,
-            rsi: arg as u64,
+            rdi: arg as u64,
             rbp: stack as u64,
             rsp: stack as u64,
             cs: gdt::KERNEL_CODE_SELECTOR as u64,

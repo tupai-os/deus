@@ -42,16 +42,16 @@ pub fn spawn_thread<F: FnOnce()>(f: F) -> Id<Thread> {
         loop { /* TODO: Kill old threads */ }
     }
 
-    let id = unsafe { THREADS.get_mut() }.lock().insert(Thread);
+    let id = unsafe { THREADS.assume_init_mut() }.lock().insert(Thread);
 
-    let stack_size = 4096;
+    let stack_size = 4096 * 32;
     let stack = Box::into_raw(vec![StackByte::default(); stack_size / 16].into_boxed_slice());
     let stack_end = unsafe { (stack as *mut u8).offset(stack_size as isize) };
     let frame = unsafe { stack_end.offset(-(core::mem::size_of::<StackFrame>() as isize)) as *mut StackFrame };
 
     unsafe { frame.write(StackFrame::new_thread(gen_thread::<F>, Box::into_raw(Box::new(f)), stack_end)) };
 
-    unsafe { SCHEDULER.get_mut() }
+    unsafe { SCHEDULER.assume_init_mut() }
         .lock()
         .waiting
         .push_back(ThreadCtx { id, stack, frame });
@@ -59,7 +59,7 @@ pub fn spawn_thread<F: FnOnce()>(f: F) -> Id<Thread> {
 }
 
 pub fn preempt(frame: *mut StackFrame) -> *mut StackFrame {
-    let mut scheduler = unsafe { SCHEDULER.get_mut() }.lock();
+    let mut scheduler = unsafe { SCHEDULER.assume_init_mut() }.lock();
 
     if let Some(mut ctx) = scheduler.current.take() {
         ctx.frame = frame;

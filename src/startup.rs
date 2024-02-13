@@ -59,7 +59,8 @@ pub fn init_drivers() {
     ];
 
     for driver in drivers {
-        logln!("[ OK ] Initiating driver {}...", driver.name);
+        logln!("[INFO] Initiating driver {}...", driver.name);
         (driver.init)();
+        logln!("[ OK ] Done.");
     }
 }
